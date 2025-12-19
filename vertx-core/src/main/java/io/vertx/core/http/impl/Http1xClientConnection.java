@@ -951,6 +951,9 @@ public class Http1xClientConnection extends Http1xConnection implements HttpClie
     boolean registerWriteHandlers,
     int maxWebSocketFrameSize,
     Promise<WebSocket> promise) {
+    // Evict connection from pool before starting WebSocket handshake
+    // to prevent lifecycle checks from closing it during upgrade
+    evictionHandler.handle(null);
     try {
       URI wsuri = new URI(requestURI);
       if (!wsuri.isAbsolute()) {
